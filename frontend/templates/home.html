@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABC Hospital - Patient Dashboard</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Dashboard Header -->
+        <header class="dashboard-header">
+            <div class="brand-header">
+                <svg class="hospital-logo" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19 10.5H13.5V5C13.5 4.17 12.83 3.5 12 3.5C11.17 3.5 10.5 4.17 10.5 5V10.5H5C4.17 10.5 3.5 11.17 3.5 12C3.5 12.83 4.17 13.5 5 13.5H10.5V19C10.5 19.83 11.17 20.5 12 20.5C12.83 20.5 13.5 19.83 13.5 19V13.5H19C19.83 13.5 20.5 12.83 20.5 12C20.5 11.17 19.83 10.5 19 10.5Z" fill="currentColor"/>
+                </svg>
+                <h1 class="brand-title">HOSPITAL REGISTRATION Portal</h1>
+            </div>
+            <button class="logout-btn" onclick="handleLogout()">Sign Out</button>
+        </header>
+
+        <!-- Main Card Welcome -->
+        <main class="card" style="max-width: 100%;">
+            <h2 id="welcome-title" style="font-size: 24px; font-weight: 700; margin-bottom: 8px;">Welcome back!</h2>
+            <p id="user-role-badge" style="display: inline-block; font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--color-primary); letter-spacing: 0.5px; margin-bottom: 24px;">Role: Loading...</p>
+
+            <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">Quick Actions & Info</h3>
+            
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid">
+                <!-- Widget 1 -->
+                <div class="widget-card">
+                    <p class="widget-label" id="w1-label">Next Appointment</p>
+                    <p class="widget-value" id="w1-value">None Scheduled</p>
+                    <p class="widget-desc" id="w1-desc">Book a consultation or view details.</p>
+                </div>
+
+                <!-- Widget 2 -->
+                <div class="widget-card">
+                    <p class="widget-label">My Medical File</p>
+                    <p class="widget-value" id="w2-value">Up to Date</p>
+                    <p class="widget-desc">Last updated: Today</p>
+                </div>
+
+                <!-- Widget 3 -->
+                <div class="widget-card">
+                    <p class="widget-label">Care Notifications</p>
+                    <p class="widget-value" id="w3-value">0 Messages</p>
+                    <p class="widget-desc">All messages read.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Retrieve logged in user from localStorage
+        const userJson = localStorage.getItem('currentUser');
+        if (!userJson) {
+            // Unauthenticated: Redirect to login
+            window.location.href = '/';
+        } else {
+            const user = JSON.parse(userJson);
+            
+            // Set dynamic welcome text
+            document.getElementById('welcome-title').textContent = `Welcome back, ${user.name}!`;
+            document.getElementById('user-role-badge').textContent = `Authenticated Role: ${user.role}`;
+
+            // Populate dashboard based on hospital role
+            const w1Label = document.getElementById('w1-label');
+            const w1Value = document.getElementById('w1-value');
+            const w1Desc = document.getElementById('w1-desc');
+            const w2Value = document.getElementById('w2-value');
+            const w3Value = document.getElementById('w3-value');
+
+            if (user.role === 'Doctor') {
+                w1Label.textContent = 'Next Patient';
+                w1Value.textContent = '11:30 AM';
+                w1Desc.textContent = 'Consultation with John Doe (Room 304).';
+                w2Value.textContent = '4 Patients';
+                w3Value.textContent = '2 Sign-offs';
+            } else if (user.role === 'Staff') {
+                w1Label.textContent = 'Shift Status';
+                w1Value.textContent = 'Active';
+                w1Desc.textContent = 'Shift ends at 6:00 PM (Emergency Wing).';
+                w2Value.textContent = '8 Checked In';
+                w3Value.textContent = '1 Order Pending';
+            } else if (user.role === 'Other') {
+                w1Label.textContent = 'Portal Access';
+                w1Value.textContent = 'Verified';
+                w1Desc.textContent = 'Generic account. Access hospital services.';
+                w2Value.textContent = 'Active';
+                w3Value.textContent = '0 Messages';
+            } else {
+                // Patient Role (default)
+                w1Label.textContent = 'Next Appointment';
+                w1Value.textContent = 'Tomorrow 10:00 AM';
+                w1Desc.textContent = 'General Consultation with Dr. Alice Smith.';
+                w2Value.textContent = 'Healthy';
+                w3Value.textContent = '0 Messages';
+            }
+        }
+
+        // Logout function
+        function handleLogout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = '/';
+        }
+    </script>
+</body>
+</html>
