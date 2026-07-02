@@ -54,9 +54,9 @@ SENDER_EMAIL=your_email@gmail.com
 SENDER_APP_PASSWORD=your_gmail_app_password  # Must be a 16-character App Password (not your primary password)
 
 # MySQL Connection Details
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_USER=root
+DB_HOST=your_host_number
+DB_PORT=your_port
+DB_USER=your_user
 DB_PASSWORD=your_mysql_password
 DB_NAME=your_patien_records
 ```
