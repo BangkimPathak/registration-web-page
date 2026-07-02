@@ -58,7 +58,7 @@ DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_USER=root
 DB_PASSWORD=your_mysql_password
-DB_NAME=patient_records
+DB_NAME=your_patien_records
 ```
 
 ### 4. Run the Application
