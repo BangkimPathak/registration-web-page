@@ -91,7 +91,7 @@ async function handleFormSubmit(event, mode) {
                 // Clear signup form and redirect to OTP validation
                 form.reset();
                 setTimeout(() => {
-                    window.location.href = result.redirect;
+                     window.location.href = result.redirect;
                 }, 1200);
             } else {
                 // Save user info to local storage and redirect to dashboard home

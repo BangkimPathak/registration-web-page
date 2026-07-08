@@ -54,9 +54,7 @@ def signup():
 
 # 1. Check if the user already exists in the permanent table = user 
         cursor.execute("SELECT status FROM users WHERE email = %s", (email,))
-        existing_user = cursor.fetchone()
-        
-        if existing_user:
+        if existing_user := cursor.fetchone():
             if existing_user['status'] == 'Verified':
                 return jsonify({'status': 'error', 'message': 'An account with this email is already verified. Please log in.'}), 400
             else:
@@ -114,14 +112,14 @@ def verify_otp_api():
         
     try:
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM otp WHERE email = %s", (email,))
+        cursor.execute("SELECT *, (expires_at < NOW()) AS is_expired FROM otp WHERE email = %s", (email,))
         otp = cursor.fetchone()
 
         if not otp:
             return jsonify({'status': 'error', 'message': 'Verification session not found. Please sign up again.'}), 400
 
         # Check Expiration Time (from MySQL expires_at column) or if already marked expired
-        if datetime.now() > otp['expires_at'] or otp['status'] == 'Expired':
+        if otp['is_expired'] or otp['status'] == 'Expired':
             cursor.execute("UPDATE otp SET status = 'Expired' WHERE email = %s", (email,))
             conn.commit()
             return jsonify({'status': 'error', 'message': 'OTP has expired. Please request a new one or sign up again.'}), 400
@@ -228,7 +226,7 @@ def set_password_api():
         conn.commit()
 
         # Fetch verified user details to send back for frontend session
-        cursor.execute("SELECT name, email, role FROM users WHERE email = %s", (email,))
+        cursor.execute("SELECT name, email, role, gender, age, phone_number, address FROM users WHERE email = %s", (email,))
         verified_user = cursor.fetchone()
 
         return jsonify({

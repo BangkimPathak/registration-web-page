@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABC Hospital - Patient Visitor Log</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        /* Modal Backdrop Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(4px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+        
+        .modal-overlay.hidden {
+            display: none;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Modal Dialog Box */
+        .modal-card {
+            background-color: var(--color-light);
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            width: 100%;
+            max-width: 550px;
+            padding: 32px;
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            transform: scale(1);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(15, 23, 42, 0.1);
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+        }
+
+        .close-modal-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: rgba(15, 23, 42, 0.4);
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .close-modal-btn:hover {
+            color: var(--color-primary);
+        }
+
+        .edit-btn:hover {
+            background-color: var(--color-primary-hover) !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container" style="max-width: 1000px;">
+        <!-- Dashboard Header -->
+        <header class="dashboard-header">
+            <div class="brand-header">
+                <svg class="hospital-logo" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19 10.5H13.5V5C13.5 4.17 12.83 3.5 12 3.5C11.17 3.5 10.5 4.17 10.5 5V10.5H5C4.17 10.5 3.5 11.17 3.5 12C3.5 12.83 4.17 13.5 5 13.5H10.5V19C10.5 19.83 11.17 20.5 12 20.5C12.83 20.5 13.5 19.83 13.5 19V13.5H19C19.83 13.5 20.5 12.83 20.5 12C20.5 11.17 19.83 10.5 19 10.5Z" fill="currentColor"/>
+                </svg>
+                <h1 class="brand-title">ABC Hospital Registration Portal</h1>
+            </div>
+            <button class="logout-btn" onclick="window.location.href = '/home'">Back to Dashboard</button>
+        </header>
+
+        <!-- Main Card Welcome -->
+        <main class="card" style="max-width: 100%;">
+            <!-- Toast Notification Container -->
+            <div id="toast-message" class="toast hidden"></div>
+
+            <div class="visit-registry-container">
+                <!-- Patient Visitor Log Table -->
+                <section class="visit-log-section">
+                    <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 16px; color: var(--color-dark);">Patient Visitor Log</h3>
+                    
+                    <div style="overflow-x: auto;">
+                        <table class="visit-table" style="width: 100%; border-collapse: collapse; margin-top: 8px;">
+                            <thead>
+                                <tr style="background-color: var(--color-bg-soft); text-align: left;">
+                                    <th style="padding: 10px 12px; font-weight: 600; font-size: 13px; border-bottom: 1px solid rgba(15, 23, 42, 0.1);">ID</th>
+                                    <th style="padding: 10px 12px; font-weight: 600; font-size: 13px; border-bottom: 1px solid rgba(15, 23, 42, 0.1);">Patient Name</th>
+                                    <th style="padding: 10px 12px; font-weight: 600; font-size: 13px; border-bottom: 1px solid rgba(15, 23, 42, 0.1);">Age/Gender</th>
+                                    <th style="padding: 10px 12px; font-weight: 600; font-size: 13px; border-bottom: 1px solid rgba(15, 23, 42, 0.1);">Contact</th>
+                                    <th style="padding: 10px 12px; font-weight: 600; font-size: 13px; border-bottom: 1px solid rgba(15, 23, 42, 0.1);">Address</th>
+                                    <th style="padding: 10px 12px; font-weight: 600; font-size: 13px; border-bottom: 1px solid rgba(15, 23, 42, 0.1);">Department</th>
+                                    <th style="padding: 10px 12px; font-weight: 600; font-size: 13px; border-bottom: 1px solid rgba(15, 23, 42, 0.1);">Attending Doctor</th>
+                                    <th style="padding: 10px 12px; font-weight: 600; font-size: 13px; border-bottom: 1px solid rgba(15, 23, 42, 0.1);">Purpose</th>
+                                    <th style="padding: 10px 12px; font-weight: 600; font-size: 13px; border-bottom: 1px solid rgba(15, 23, 42, 0.1);">Visit Time</th>
+                                    <th style="padding: 10px 12px; font-weight: 600; font-size: 13px; border-bottom: 1px solid rgba(15, 23, 42, 0.1); text-align: center;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="visit-log-body" style="font-size: 14px;">
+                                <!-- Will be dynamically populated -->
+                                <tr>
+                                    <td colspan="10" style="padding: 24px; text-align: center; color: rgba(15, 23, 42, 0.6);">Loading visitor records...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Edit Modal Overlay -->
+    <div id="edit-modal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <header class="modal-header">
+                <h3 style="font-size: 18px; font-weight: 700; color: var(--color-dark);">Edit Visitor Record</h3>
+                <button type="button" class="close-modal-btn" onclick="closeEditModal()">&times;</button>
+            </header>
+            
+            <form id="edit-visit-form" onsubmit="handleEditSubmit(event)" style="display: flex; flex-direction: column; gap: 16px; margin-top: 16px;">
+                <input type="hidden" id="edit-visit-id">
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="input-group">
+                        <label for="edit-visit-name">Patient Name</label>
+                        <input type="text" id="edit-visit-name" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="edit-visit-phone">Contact Number</label>
+                        <input type="tel" id="edit-visit-phone" required>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="input-group">
+                        <label for="edit-visit-age">Age</label>
+                        <input type="number" id="edit-visit-age" required min="1" max="120">
+                    </div>
+                    <div class="input-group">
+                        <label for="edit-visit-gender">Gender</label>
+                        <select id="edit-visit-gender" required>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="input-group">
+                        <label for="edit-visit-address">Home Address</label>
+                        <input type="text" id="edit-visit-address" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="edit-visit-department">Department</label>
+                        <input type="text" id="edit-visit-department" required>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="input-group">
+                        <label for="edit-visit-doctor">Attending Doctor</label>
+                        <input type="text" id="edit-visit-doctor" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="edit-visit-purpose">Purpose of Visit</label>
+                        <input type="text" id="edit-visit-purpose" required>
+                    </div>
+                </div>
+
+
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px;">
+                    <button type="button" class="logout-btn" onclick="closeEditModal()" style="border: 1.5px solid rgba(15, 23, 42, 0.3); color: rgba(15, 23, 42, 0.7); width: 100%;">Cancel</button>
+                    <button type="submit" class="submit-btn" style="margin-top: 0; width: 100%;">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Store all loaded visits globally
+        let allVisits = [];
+
+        // Retrieve logged in user from localStorage
+        const userJson = localStorage.getItem('currentUser');
+        if (!userJson) {
+            // Unauthenticated: Redirect to login
+            window.location.href = '/';
+        } else {
+            // Load existing visits
+            loadVisits();
+        }
+
+        // Toast notification helpers
+        function showToast(message, type) {
+            const toast = document.getElementById('toast-message');
+            toast.textContent = message;
+            toast.className = `toast ${type}`;
+        }
+
+        function hideToast() {
+            const toast = document.getElementById('toast-message');
+            toast.className = 'toast hidden';
+        }
+
+        // Fetch and load visit logs
+        async function loadVisits() {
+            try {
+                const response = await fetch('/api/visits');
+                const result = await response.json();
+                
+                if (response.ok && result.visits) {
+                    allVisits = result.visits;
+                    const tbody = document.getElementById('visit-log-body');
+                    if (result.visits.length === 0) {
+                        tbody.innerHTML = `
+                            <tr>
+                                <td colspan="10" style="padding: 24px; text-align: center; color: rgba(15, 23, 42, 0.6);">No visitor records found.</td>
+                            </tr>
+                        `;
+                    } else {
+                        tbody.innerHTML = result.visits.map(v => `
+                            <tr>
+                                <td style="font-weight: 600; padding: 12px;">#${v.id}</td>
+                                <td style="font-weight: 500; padding: 12px;">${v.patient_name}</td>
+                                <td style="padding: 12px;">${v.age} / ${v.gender}</td>
+                                <td style="padding: 12px;">${v.phone_number}</td>
+                                <td style="padding: 12px;">${v.address || ''}</td>
+                                <td style="padding: 12px;">${v.department || ''}</td>
+                                <td style="padding: 12px;">${v.attending_doctor}</td>
+                                <td style="padding: 12px;">${v.purpose}</td>
+                                <td style="color: rgba(15, 23, 42, 0.6); padding: 12px;">${v.visit_time}</td>
+                                <td style="padding: 12px; text-align: center;">
+                                    <button class="edit-btn" onclick="openEditModal(${v.id})" style="background-color: var(--color-primary); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; transition: background-color 0.2s;">Edit</button>
+                                </td>
+                            </tr>
+                        `).join('');
+                    }
+                } else {
+                    showToast(result.message || 'Failed to load visit log.', 'error');
+                }
+            } catch (err) {
+                console.error('Error loading visits:', err);
+                showToast('Network error: Could not fetch visit logs.', 'error');
+            }
+        }
+
+        // Open edit modal and fill fields dynamically from the MySQL database
+        async function openEditModal(id) {
+            hideToast();
+            try {
+                // Fetch the record details directly from the database API
+                const response = await fetch(`/api/visits/detail?id=${id}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch visit data');
+                }
+                const result = await response.json();
+                
+                if (result.status === 'success' && result.visit) {
+                    const v = result.visit;
+                    document.getElementById('edit-visit-id').value = v.id;
+                    document.getElementById('edit-visit-name').value = v.patient_name;
+                    document.getElementById('edit-visit-phone').value = v.phone_number;
+                    document.getElementById('edit-visit-age').value = v.age;
+                    document.getElementById('edit-visit-gender').value = v.gender;
+                    document.getElementById('edit-visit-address').value = v.address || '';
+                    document.getElementById('edit-visit-department').value = v.department || '';
+                    document.getElementById('edit-visit-doctor').value = v.attending_doctor;
+                    document.getElementById('edit-visit-purpose').value = v.purpose;
+
+                    document.getElementById('edit-modal').classList.remove('hidden');
+                } else {
+                    showToast(result.message || 'Failed to fetch record from database.', 'error');
+                }
+            } catch (err) {
+                console.error('Error fetching visit details:', err);
+                showToast('Network error: Could not fetch record from database.', 'error');
+            }
+        }
+
+        // Close edit modal
+        function closeEditModal() {
+            document.getElementById('edit-modal').classList.add('hidden');
+            document.getElementById('edit-visit-form').reset();
+        }
+
+        // Handle Edit Form Submit
+        async function handleEditSubmit(event) {
+            event.preventDefault();
+            hideToast();
+
+            const submitBtn = event.target.querySelector('.submit-btn');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Saving...';
+            submitBtn.disabled = true;
+
+            const payload = {
+                id: parseInt(document.getElementById('edit-visit-id').value, 10),
+                patient_name: document.getElementById('edit-visit-name').value.trim(),
+                phone_number: document.getElementById('edit-visit-phone').value.trim(),
+                age: parseInt(document.getElementById('edit-visit-age').value, 10),
+                gender: document.getElementById('edit-visit-gender').value,
+                address: document.getElementById('edit-visit-address').value.trim(),
+                department: document.getElementById('edit-visit-department').value.trim(),
+                attending_doctor: document.getElementById('edit-visit-doctor').value.trim(),
+                purpose: document.getElementById('edit-visit-purpose').value.trim()
+            };
+
+            try {
+                const response = await fetch('/api/visits/edit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showToast(result.message, 'success');
+                    closeEditModal();
+                    loadVisits(); // Reload logs
+                } else {
+                    showToast(result.message || 'Failed to update record.', 'error');
+                }
+            } catch (err) {
+                console.error('Error updating visit:', err);
+                showToast('Network error: Could not reach server to save changes.', 'error');
+            } finally {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

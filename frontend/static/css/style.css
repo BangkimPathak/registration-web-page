@@ -7,6 +7,7 @@
     --color-bg-soft: #A2DFF7;      /* Trustworthy Light Teal for Page background */
     --color-secondary: #3A9AD9;    /* Trustworthy Blue */
     --color-subtle: #6BCBEB;       /* Medium Light Teal */
+    --color-border: rgba(15, 23, 42, 0.1); /* Light border color */
 }
 
 * {
@@ -278,4 +279,23 @@ body {
 .widget-desc {
     font-size: 13px;
     color: rgba(15, 23, 42, 0.6);
+}
+
+/* Patient Visit Table Styles */
+.visit-table th {
+    padding: 10px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-dark);
+    border-bottom: 1.5px solid var(--color-border);
+}
+
+.visit-table td {
+    padding: 12px;
+    font-size: 13px;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.visit-table tbody tr:hover {
+    background-color: rgba(0, 123, 138, 0.02);
 }

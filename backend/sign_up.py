@@ -38,7 +38,11 @@ def login():
                 'user': {
                     'name': user_found['name'],
                     'email': user_found['email'],
-                    'role': user_found['role']
+                    'role': user_found['role'],
+                    'gender': user_found['gender'],
+                    'age': user_found['age'],
+                    'phone_number': user_found['phone_number'],
+                    'address': user_found['address']
                 }
             })
         else:
