@@ -55,11 +55,9 @@ def get_visit_detail_api():
         conn.close()
 
 def edit_api():
-    data = request.get_json() or {}    
+    data = request.get_json() or {}   
+
     visit_id = data.get('id')
-
-   
-
     patient_name = data.get('patient_name', '').strip()
     age = data.get('age')
     gender = data.get('gender', '').strip()
@@ -98,7 +96,7 @@ def edit_api():
         conn.commit()
 
         # If it returns 0 rowcount, it might mean the ID doesn't exist OR the user submitted without making any changes.
-        # Let's check if the ID exists to give a more accurate error.
+        # check if the ID exists to give a more accurate error.
         cursor.execute("SELECT id FROM patient_records WHERE id = %s", (visit_id,))
         if not cursor.fetchone():
             return jsonify({'status': 'error', 'message': "No record found with the provided id"}), 404
@@ -109,4 +107,34 @@ def edit_api():
         return jsonify({'status': 'error', 'message': f"Database Error: {str(e)}"}), 500
     finally:
         cursor.close()
+        conn.close()
+def delete_api():
+    delete_id = request.args.get('id')
+
+    if not delete_id:
+        return jsonify({
+            'status': 'error',
+            'message': 'Record ID is required for deletion.'
+        }), 400
+
+    conn = get_db_connection()
+    if conn is None:
+        return jsonify({'status': 'error', 'message': 'Database connection failed.'}), 500
+
+    cursor = None
+    try:
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM patient_records WHERE id = %s", (delete_id,))
+        conn.commit()
+
+        if cursor.rowcount == 0:
+            return jsonify({'status': 'error', 'message': 'No record found with the provided id.'}), 404
+
+        return jsonify({'status': 'success', 'message': 'Record deleted successfully.'})
+    except Error as e:
+        print(f"Database error during visit deletion: {e}")
+        return jsonify({'status': 'error', 'message': f"Database Error: {str(e)}"}), 500
+    finally:
+        if cursor:
+            cursor.close()
         conn.close()

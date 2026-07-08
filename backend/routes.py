@@ -2,7 +2,7 @@ from flask import Blueprint, render_template
 from registration import verified_otp_page, set_password_page, signup, verify_otp_api, resend_otp_api, set_password_api
 from sign_up import login
 from visits import add_visit_api
-from list import get_visits_api, edit_api, get_visit_detail_api
+from list import delete_api, get_visits_api, edit_api, get_visit_detail_api
 
 # Define blueprints
 main_bp = Blueprint('main', __name__)
@@ -30,6 +30,7 @@ main_bp.route('/api/visits', methods=['POST'])(add_visit_api)
 main_bp.route('/api/visits', methods=['GET'])(get_visits_api)
 main_bp.route('/api/visits/edit', methods=['POST'])(edit_api)
 main_bp.route('/api/visits/detail', methods=['GET'])(get_visit_detail_api)
+main_bp.route('/api/visits/delete', methods=['DELETE'])(delete_api)
 
 # Register Registration routes
 registration_bp.route('/verify-otp')(verified_otp_page)
