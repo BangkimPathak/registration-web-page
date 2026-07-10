@@ -100,6 +100,26 @@
                 <section class="visit-log-section">
                     <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 16px; color: var(--color-dark);">Patient Visitor Log</h3>
                     
+                    <!-- Search & Date Filter Bar -->
+                    <div style="display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 20px; align-items: center; background-color: rgba(15, 23, 42, 0.03); padding: 16px; border-radius: 12px; border: 1px solid rgba(15, 23, 42, 0.08);">
+                        <!-- Text Search -->
+                        <div style="display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 250px;">
+                            <label style="font-size: 12px; font-weight: 600; color: rgba(15, 23, 42, 0.6); margin-bottom: 4px;">Search Keyword</label>
+                            <input type="text" id="search-input" placeholder="Search by Patient Name, Phone, Doctor, etc..." style="padding: 8px 12px; border: 1.5px solid rgba(15, 23, 42, 0.15); border-radius: 8px; font-size: 14px; outline: none; background: white;" oninput="handleSearch(event)">
+                        </div>
+                        
+                        <!-- From Date -->
+                        <div style="display: flex; flex-direction: column; gap: 4px; width: 150px;">
+                            <label style="font-size: 12px; font-weight: 600; color: rgba(15, 23, 42, 0.6); margin-bottom: 4px;">From Date</label>
+                            <input type="date" id="filter-from-date" onchange="filterVisits()" style="padding: 7px 10px; border: 1.5px solid rgba(15, 23, 42, 0.15); border-radius: 8px; font-size: 14px; outline: none; background: white;">
+                        </div>
+
+                        <!-- To Date -->
+                        <div style="display: flex; flex-direction: column; gap: 4px; width: 150px;">
+                            <label style="font-size: 12px; font-weight: 600; color: rgba(15, 23, 42, 0.6); margin-bottom: 4px;">To Date</label>
+                            <input type="date" id="filter-to-date" onchange="filterVisits()" style="padding: 7px 10px; border: 1.5px solid rgba(15, 23, 42, 0.15); border-radius: 8px; font-size: 14px; outline: none; background: white;">
+                        </div>
+                    
                     <div style="overflow-x: auto;">
                         <table class="visit-table" style="width: 100%; border-collapse: collapse; margin-top: 8px;">
                             <thead>
@@ -224,6 +244,36 @@
             toast.className = 'toast hidden';
         }
 
+        // Reusable function to render table rows
+        function renderTableRows(visits) {
+            const tbody = document.getElementById('visit-log-body');
+            if (visits.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="10" style="padding: 24px; text-align: center; color: rgba(15, 23, 42, 0.6);">No matching records found.</td>
+                    </tr>
+                `;
+            } else {
+                tbody.innerHTML = visits.map(v => `
+                    <tr>
+                        <td style="font-weight: 600; padding: 12px;">#${v.id}</td>
+                        <td style="font-weight: 500; padding: 12px;">${v.patient_name}</td>
+                        <td style="padding: 12px;">${v.age} / ${v.gender}</td>
+                        <td style="padding: 12px;">${v.phone_number}</td>
+                        <td style="padding: 12px;">${v.address || ''}</td>
+                        <td style="padding: 12px;">${v.department || ''}</td>
+                        <td style="padding: 12px;">${v.attending_doctor}</td>
+                        <td style="padding: 12px;">${v.purpose}</td>
+                        <td style="color: rgba(15, 23, 42, 0.6); padding: 12px;">${v.visit_time}</td>
+                        <td style="padding: 12px; text-align: center; display: flex; justify-content: center; gap: 8px;">
+                            <button class="edit-btn" onclick="openEditModal(${v.id})" style="background-color: var(--color-primary); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; transition: background-color 0.2s;">Edit</button>
+                            <button class="delete-btn" onclick="deleteVisit(${v.id})" style="background-color: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; transition: background-color 0.2s;">Delete</button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+
         // Fetch and load visit logs
         async function loadVisits() {
             try {
@@ -232,32 +282,7 @@
                 
                 if (response.ok && result.visits) {
                     allVisits = result.visits;
-                    const tbody = document.getElementById('visit-log-body');
-                    if (result.visits.length === 0) {
-                        tbody.innerHTML = `
-                            <tr>
-                                <td colspan="10" style="padding: 24px; text-align: center; color: rgba(15, 23, 42, 0.6);">No visitor records found.</td>
-                            </tr>
-                        `;
-                    } else {
-                        tbody.innerHTML = result.visits.map(v => `
-                            <tr>
-                                <td style="font-weight: 600; padding: 12px;">#${v.id}</td>
-                                <td style="font-weight: 500; padding: 12px;">${v.patient_name}</td>
-                                <td style="padding: 12px;">${v.age} / ${v.gender}</td>
-                                <td style="padding: 12px;">${v.phone_number}</td>
-                                <td style="padding: 12px;">${v.address || ''}</td>
-                                <td style="padding: 12px;">${v.department || ''}</td>
-                                <td style="padding: 12px;">${v.attending_doctor}</td>
-                                <td style="padding: 12px;">${v.purpose}</td>
-                                <td style="color: rgba(15, 23, 42, 0.6); padding: 12px;">${v.visit_time}</td>
-                                <td style="padding: 12px; text-align: center; display: flex; justify-content: center; gap: 8px;">
-                                    <button class="edit-btn" onclick="openEditModal(${v.id})" style="background-color: var(--color-primary); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; transition: background-color 0.2s;">Edit</button>
-                                    <button class="delete-btn" onclick="deleteVisit(${v.id})" style="background-color: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; transition: background-color 0.2s;">Delete</button>
-                                </td>
-                            </tr>
-                        `).join('');
-                    }
+                    renderTableRows(allVisits);
                 } else {
                     showToast(result.message || 'Failed to load visit log.', 'error');
                 }
@@ -266,7 +291,6 @@
                 showToast('Network error: Could not fetch visit logs.', 'error');
             }
         }
-
         // Open edit modal and fill fields dynamically from the MySQL database
         async function openEditModal(id) {
             hideToast();
@@ -324,6 +348,50 @@
                 console.error('Error deleting visit:', err);
                 showToast('Network error: Could not reach server to delete record.', 'error');
             }
+        }
+        // Combined filter matching text search and date ranges
+        function filterVisits() {
+            const query = document.getElementById('search-input').value.toLowerCase().trim();
+            const fromDateVal = document.getElementById('filter-from-date').value;
+            const toDateVal = document.getElementById('filter-to-date').value;
+
+            const filtered = allVisits.filter(v => {
+                // 1. Text Search Check
+                const matchesText = query === '' || (
+                    v.patient_name.toLowerCase().includes(query) ||
+                    String(v.age).includes(query) ||
+                    v.gender.toLowerCase().includes(query) ||
+                    v.phone_number.toLowerCase().includes(query) ||
+                    (v.address && v.address.toLowerCase().includes(query)) ||
+                    (v.department && v.department.toLowerCase().includes(query)) ||
+                    v.attending_doctor.toLowerCase().includes(query) ||
+                    v.purpose.toLowerCase().includes(query) ||
+                    v.visit_time.toLowerCase().includes(query)
+                );
+
+                // 2. Date Range Check
+                const visitDateStr = v.visit_time.split(' ')[0]; // Extract YYYY-MM-DD
+                
+                let matchesFrom = true;
+                if (fromDateVal) {
+                    matchesFrom = (visitDateStr >= fromDateVal);
+                }
+
+                let matchesTo = true;
+                if (toDateVal) {
+                    matchesTo = (visitDateStr <= toDateVal);
+                }
+
+                return matchesText && matchesFrom && matchesTo;
+            });
+
+            renderTableRows(filtered);
+        }
+
+        // Trigger search in real-time as user types
+        function handleSearch(event) {
+            filterVisits();
+
         }
 
 
@@ -387,4 +455,4 @@
         }
     </script>
 </body>
-</html>
+</html>)

@@ -21,7 +21,7 @@ def home():
 def visits_page():
     return render_template('visits_list.html')
 
-# Register HTML/Main routes
+# Register , list and visiters HTML/Main routes
 main_bp.route('/test/<id>')(getUser)
 main_bp.route('/')(index)
 main_bp.route('/home')(home)
