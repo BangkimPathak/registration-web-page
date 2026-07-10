@@ -338,6 +338,10 @@
             event.preventDefault();
             hideToast();
 
+            if (!confirm('Are you sure you want to SAVE this record? This action can be reversed at any time.')) {
+                return;
+            }
+
             const submitBtn = event.target.querySelector('.submit-btn');
             const originalText = submitBtn.textContent;
             submitBtn.textContent = 'Saving...';
