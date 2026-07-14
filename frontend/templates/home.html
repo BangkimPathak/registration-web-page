@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,13 +12,16 @@
     <!-- Custom Style Sheet -->
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
+
 <body>
     <div class="dashboard-container" style="max-width: 900px;">
         <!-- Dashboard Header -->
         <header class="dashboard-header">
             <div class="brand-header">
                 <svg class="hospital-logo" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M19 10.5H13.5V5C13.5 4.17 12.83 3.5 12 3.5C11.17 3.5 10.5 4.17 10.5 5V10.5H5C4.17 10.5 3.5 11.17 3.5 12C3.5 12.83 4.17 13.5 5 13.5H10.5V19C10.5 19.83 11.17 20.5 12 20.5C12.83 20.5 13.5 19.83 13.5 19V13.5H19C19.83 13.5 20.5 12.83 20.5 12C20.5 11.17 19.83 10.5 19 10.5Z" fill="currentColor"/>
+                    <path
+                        d="M19 10.5H13.5V5C13.5 4.17 12.83 3.5 12 3.5C11.17 3.5 10.5 4.17 10.5 5V10.5H5C4.17 10.5 3.5 11.17 3.5 12C3.5 12.83 4.17 13.5 5 13.5H10.5V19C10.5 19.83 11.17 20.5 12 20.5C12.83 20.5 13.5 19.83 13.5 19V13.5H19C19.83 13.5 20.5 12.83 20.5 12C20.5 11.17 19.83 10.5 19 10.5Z"
+                        fill="currentColor" />
                 </svg>
                 <h1 class="brand-title">ABC Hospital Registration Portal</h1>
             </div>
@@ -27,7 +31,9 @@
         <!-- Main Card Welcome -->
         <main class="card" style="max-width: 100%;">
             <h2 id="welcome-title" style="font-size: 24px; font-weight: 700; margin-bottom: 8px;">Welcome back!</h2>
-            <p id="user-role-badge" style="display: inline-block; font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--color-primary); letter-spacing: 0.5px; margin-bottom: 24px;">Role: Loading...</p>
+            <p id="user-role-badge"
+                style="display: inline-block; font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--color-primary); letter-spacing: 0.5px; margin-bottom: 24px;">
+                Role: Loading...</p>
 
             <!-- Toast Notification Container -->
             <div id="toast-message" class="toast hidden"></div>
@@ -35,8 +41,10 @@
             <div class="visit-registry-container">
                 <!-- Manual Visit Entry Form -->
                 <section class="visit-form-section">
-                    <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px; color: var(--color-dark);">Log New Patient Visit</h3>
-                    <form id="visit-form" onsubmit="handleVisitSubmit(event)" style="display: flex; flex-direction: column; gap: 16px;">
+                    <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px; color: var(--color-dark);">Log
+                        New Patient Visit</h3>
+                    <form id="visit-form" onsubmit="handleVisitSubmit(event)"
+                        style="display: flex; flex-direction: column; gap: 16px;">
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                             <div class="input-group">
                                 <label for="visit-name">Patient Name</label>
@@ -89,7 +97,9 @@
 
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px;">
                             <button type="submit" class="submit-btn">Log Visitor Entry</button>
-                            <button type="button" class="logout-btn" onclick="window.location.href = '/visits'" style="padding: 14px; font-size: 14px; font-weight: 600; width: 100%;">View Patient Visitor Log</button>
+                            <button type="button" class="logout-btn" onclick="window.location.href = '/visits'"
+                                style="padding: 14px; font-size: 14px; font-weight: 600; width: 100%;">View Patient
+                                Visitor Log</button>
                         </div>
                     </form>
                 </section>
@@ -105,7 +115,7 @@
             window.location.href = '/';
         } else {
             const user = JSON.parse(userJson);
-            
+
             // Set dynamic welcome text
             document.getElementById('welcome-title').textContent = `Welcome back, ${user.name}!`;
             document.getElementById('user-role-badge').textContent = `Authenticated Role: ${user.role}`;
@@ -179,4 +189,5 @@
         }
     </script>
 </body>
+
 </html>
